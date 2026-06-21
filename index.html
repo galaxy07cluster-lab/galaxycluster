@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. A. Rahman — Research Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:    #0A0F1E;
+  --oxford:  #1E3A5F;
+  --cerulean:#2563EB;
+  --sky:     #3B82F6;
+  --pale:    #EFF6FF;
+  --snow:    #F8FAFC;
+  --slate:   #64748B;
+  --border:  #E2E8F0;
+  --muted:   #94A3B8;
+  --white:   #FFFFFF;
+  --success: #10B981;
+  --warn:    #F59E0B;
+  --danger:  #EF4444;
+
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+
+  --shadow-sm:  0 1px 3px rgba(10,15,30,.08), 0 1px 2px rgba(10,15,30,.06);
+  --shadow-md:  0 4px 16px rgba(10,15,30,.10), 0 2px 6px rgba(10,15,30,.07);
+  --shadow-lg:  0 16px 48px rgba(10,15,30,.14), 0 4px 16px rgba(10,15,30,.08);
+
+  --sidebar-w: 260px;
+  --transition: 200ms cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"] {
+  --navy:    #E2E8F0;
+  --oxford:  #BFDBFE;
+  --cerulean:#60A5FA;
+  --sky:     #93C5FD;
+  --pale:    #1E293B;
+  --snow:    #0F172A;
+  --slate:   #94A3B8;
+  --border:  #1E293B;
+  --muted:   #475569;
+  --white:   #1E293B;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.4);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,.5);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--snow);
+  color: var(--navy);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ── SCROLLBAR ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--snow); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ── LAYOUT ─────────────────────────────────────────────── */
+.app-shell { display: flex; min-height: 100vh; }
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 100;
+  transition: transform var(--transition), background var(--transition);
+  overflow-y: auto;
+}
+.main-content {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0;
+  transition: margin var(--transition);
+}
+
+/* ── SIDEBAR CONTENT ────────────────────────────────────── */
+.sidebar-brand {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.brand-initials {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--oxford), var(--cerulean));
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  color: #fff; font-size: 1.25rem;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(37,99,235,.25);
+}
+.brand-name { font-weight: 700; font-size: .875rem; color: var(--navy); line-height: 1.3; }
+.brand-title { font-size: .75rem; color: var(--slate); margin-top: 2px; font-family: var(--font-mono); }
+
+.sidebar-nav { padding: 16px 12px; flex: 1; }
+.nav-section-label {
+  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 16px 12px 6px; font-family: var(--font-mono);
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius-md);
+  cursor: pointer; transition: all var(--transition);
+  color: var(--slate); font-size: .875rem; font-weight: 500;
+  position: relative;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--pale); color: var(--cerulean); }
+.nav-item.active { background: var(--pale); color: var(--cerulean); font-weight: 600; }
+.nav-item.active::before {
+  content: ''; position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 20px;
+  background: var(--cerulean); border-radius: 0 3px 3px 0;
+}
+.nav-icon { width: 18px; height: 18px; flex-shrink: 0; }
+.nav-badge {
+  margin-left: auto; background: var(--cerulean); color: #fff;
+  font-size: .65rem; padding: 2px 7px; border-radius: 99px;
+  font-weight: 700; font-family: var(--font-mono);
+}
+
+.sidebar-footer {
+  padding: 16px 12px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.theme-toggle {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-md);
+  cursor: pointer; font-size: .8rem; color: var(--slate);
+  border: 1px solid var(--border); background: none;
+  transition: all var(--transition); font-family: var(--font-body);
+}
+.theme-toggle:hover { background: var(--pale); color: var(--cerulean); }
+
+/* ── TOP BAR ────────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(248,250,252,.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 64px;
+  display: flex; align-items: center; gap: 16px;
+  transition: background var(--transition);
+}
+[data-theme="dark"] .topbar { background: rgba(15,23,42,.85); }
+.topbar-search {
+  flex: 1; max-width: 480px;
+  display: flex; align-items: center; gap: 10px;
+  background: var(--snow); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 8px 14px;
+  transition: all var(--transition);
+}
+.topbar-search:focus-within { border-color: var(--cerulean); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.topbar-search input {
+  border: none; background: none; flex: 1; font-size: .875rem;
+  color: var(--navy); font-family: var(--font-body); outline: none;
+}
+.topbar-search input::placeholder { color: var(--muted); }
+.topbar-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.btn-icon {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-md); border: 1px solid var(--border);
+  background: none; cursor: pointer; color: var(--slate); transition: all var(--transition);
+}
+.btn-icon:hover { background: var(--pale); color: var(--cerulean); border-color: var(--cerulean); }
+.avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--oxford), var(--cerulean));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: .8rem; font-weight: 700; cursor: pointer;
+  flex-shrink: 0; border: 2px solid var(--white);
+  box-shadow: 0 0 0 2px var(--cerulean);
+}
+.hamburger { display: none; }
+
+/* ── PAGE SECTIONS ──────────────────────────────────────── */
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+/* ── HOME PAGE ──────────────────────────────────────────── */
+.hero {
+  padding: 72px 40px 56px;
+  background: linear-gradient(160deg, var(--white) 0%, var(--pale) 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(37,99,235,.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--font-mono); font-size: .75rem;
+  color: var(--cerulean); letter-spacing: .12em;
+  text-transform: uppercase; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before {
+  content: ''; width: 24px; height: 2px; background: var(--cerulean);
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  line-height: 1.12; color: var(--navy);
+  max-width: 700px; margin-bottom: 20px;
+  letter-spacing: -.02em;
+}
+.hero h1 em { font-style: italic; color: var(--cerulean); }
+.hero-bio {
+  font-size: 1.0625rem; color: var(--slate); max-width: 560px;
+  line-height: 1.75; margin-bottom: 36px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px; border-radius: var(--radius-md);
+  font-size: .875rem; font-weight: 600; cursor: pointer;
+  transition: all var(--transition); border: none; font-family: var(--font-body);
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--cerulean); color: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,.3);
+}
+.btn-primary:hover { background: var(--oxford); box-shadow: 0 4px 16px rgba(37,99,235,.4); transform: translateY(-1px); }
+.btn-ghost {
+  background: var(--white); color: var(--navy);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--cerulean); color: var(--cerulean); background: var(--pale); }
+.btn-sm { padding: 7px 14px; font-size: .8rem; }
+
+.hero-stats {
+  display: flex; gap: 48px; margin-top: 48px; padding-top: 32px;
+  border-top: 1px solid var(--border); flex-wrap: wrap;
+}
+.stat-item {}
+.stat-number {
+  font-family: var(--font-display); font-size: 2rem;
+  color: var(--navy); line-height: 1;
+}
+.stat-label { font-size: .8rem; color: var(--muted); margin-top: 4px; font-family: var(--font-mono); }
+
+/* ── SECTION GRID ───────────────────────────────────────── */
+.content-grid {
+  padding: 48px 40px;
+}
+.section-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.section-title {
+  font-family: var(--font-display); font-size: 1.625rem;
+  color: var(--navy); line-height: 1.2;
+}
+.section-link {
+  font-size: .8rem; color: var(--cerulean); font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 4px;
+  border: none; background: none; font-family: var(--font-body);
+  transition: gap var(--transition);
+}
+.section-link:hover { gap: 8px; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+/* ── PAPER CARD ─────────────────────────────────────────── */
+.paper-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px;
+  transition: all var(--transition); position: relative; overflow: hidden;
+}
+.paper-card:hover {
+  box-shadow: var(--shadow-md); border-color: var(--cerulean);
+  transform: translateY(-2px);
+}
+.paper-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cerulean), var(--sky));
+  opacity: 0; transition: opacity var(--transition);
+}
+.paper-card:hover::after { opacity: 1; }
+.paper-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tag {
+  font-family: var(--font-mono); font-size: .68rem; font-weight: 500;
+  padding: 3px 9px; border-radius: 99px;
+  background: var(--pale); color: var(--cerulean); border: 1px solid rgba(37,99,235,.15);
+}
+.tag.ml { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+.tag.neuro { background: #F0FDF4; color: #166534; border-color: #BBF7D0; }
+.tag.ethics { background: #FDF4FF; color: #7E22CE; border-color: #E9D5FF; }
+.tag.nlp { background: #FFF7ED; color: #9A3412; border-color: #FED7AA; }
+[data-theme="dark"] .tag.ml { background: #422006; color: #FDE68A; border-color: #713F12; }
+[data-theme="dark"] .tag.neuro { background: #052e16; color: #86EFAC; border-color: #166534; }
+[data-theme="dark"] .tag.ethics { background: #2e1065; color: #D8B4FE; border-color: #6D28D9; }
+[data-theme="dark"] .tag.nlp { background: #431407; color: #FDBA74; border-color: #9A3412; }
+[data-theme="dark"] .badge-expert { background: #2e1065; color: #D8B4FE; }
+[data-theme="dark"] .icon-green { background: #052e16; }
+[data-theme="dark"] .icon-amber { background: #422006; }
+[data-theme="dark"] .icon-purple { background: #2e1065; color: #D8B4FE; }
+.paper-title {
+  font-family: var(--font-display); font-size: 1.0625rem; line-height: 1.35;
+  color: var(--navy); margin-bottom: 10px; cursor: pointer;
+}
+.paper-title:hover { color: var(--cerulean); }
+.paper-abstract {
+  font-size: .8125rem; color: var(--slate); line-height: 1.65;
+  margin-bottom: 18px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.paper-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .75rem; color: var(--muted); font-family: var(--font-mono);
+}
+.paper-actions { display: flex; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+/* ── MEDIA CARD ─────────────────────────────────────────── */
+.media-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  transition: all var(--transition);
+}
+.media-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.media-thumb {
+  aspect-ratio: 16/9; background: linear-gradient(135deg, var(--oxford), var(--cerulean));
+  position: relative; display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.media-thumb.audio-thumb {
+  background: linear-gradient(135deg, #1E3A5F, #2563EB);
+  aspect-ratio: 3/1;
+}
+.play-btn {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4);
+  display: flex; align-items: center; justify-content: center; color: #fff;
+  cursor: pointer; transition: all var(--transition); backdrop-filter: blur(4px);
+}
+.play-btn:hover { background: rgba(255,255,255,.25); transform: scale(1.08); }
+.media-duration {
+  position: absolute; bottom: 10px; right: 10px;
+  background: rgba(0,0,0,.6); color: #fff;
+  font-size: .7rem; padding: 3px 7px; border-radius: 4px;
+  font-family: var(--font-mono);
+}
+.media-info { padding: 18px; }
+.media-title { font-weight: 600; font-size: .9375rem; color: var(--navy); margin-bottom: 6px; line-height: 1.35; }
+.media-desc { font-size: .8rem; color: var(--slate); line-height: 1.6; margin-bottom: 12px; }
+.media-meta { font-size: .75rem; color: var(--muted); font-family: var(--font-mono); display: flex; gap: 12px; }
+
+/* ── AUDIO PLAYER ───────────────────────────────────────── */
+.audio-player {
+  background: linear-gradient(135deg, var(--oxford), var(--navy));
+  border-radius: var(--radius-lg); padding: 20px; color: #fff; margin-bottom: 16px;
+}
+.audio-title { font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+.audio-subtitle { font-size: .75rem; opacity: .65; margin-bottom: 16px; font-family: var(--font-mono); }
+.audio-controls { display: flex; align-items: center; gap: 12px; }
+.audio-btn {
+  background: rgba(255,255,255,.12); border: none; color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all var(--transition);
+}
+.audio-btn:hover { background: rgba(255,255,255,.22); }
+.audio-progress { flex: 1; }
+.progress-bar {
+  height: 4px; background: rgba(255,255,255,.2); border-radius: 99px;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--cerulean); border-radius: 99px;
+  transition: width .1s linear;
+}
+.audio-time { font-size: .75rem; font-family: var(--font-mono); opacity: .7; white-space: nowrap; }
+
+/* ── DISCUSSION ─────────────────────────────────────────── */
+.discussion-header {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 28px 40px;
+}
+.discussion-header h2 { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 6px; }
+.discussion-header p { color: var(--slate); font-size: .875rem; }
+.discussion-filters {
+  padding: 16px 40px; display: flex; gap: 8px; flex-wrap: wrap;
+  background: var(--white); border-bottom: 1px solid var(--border);
+}
+.filter-pill {
+  padding: 6px 14px; border-radius: 99px; font-size: .8rem; font-weight: 500;
+  border: 1px solid var(--border); background: none; cursor: pointer;
+  transition: all var(--transition); color: var(--slate); font-family: var(--font-body);
+}
+.filter-pill.active, .filter-pill:hover { background: var(--cerulean); color: #fff; border-color: var(--cerulean); }
+.discussion-body { padding: 32px 40px; }
+.new-post-box {
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 20px; margin-bottom: 28px;
+}
+.new-post-top { display: flex; gap: 12px; margin-bottom: 14px; }
+.post-textarea {
+  flex: 1; border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 12px; font-family: var(--font-body); font-size: .875rem;
+  color: var(--navy); background: var(--snow); resize: vertical;
+  min-height: 80px; outline: none; transition: border-color var(--transition);
+  line-height: 1.6;
+}
+.post-textarea:focus { border-color: var(--cerulean); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.post-actions-row { display: flex; align-items: center; gap: 8px; }
+.attach-btn {
+  display: flex; align-items: center; gap: 6px; padding: 7px 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: none; cursor: pointer; font-size: .8rem; color: var(--slate);
+  transition: all var(--transition); font-family: var(--font-body);
+}
+.attach-btn:hover { border-color: var(--cerulean); color: var(--cerulean); background: var(--pale); }
+
+/* ── THREAD ─────────────────────────────────────────────── */
+.thread { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden; }
+.thread-header {
+  padding: 18px 20px; display: flex; align-items: flex-start; gap: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.thread-avatar {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: .875rem; color: #fff;
+}
+.thread-meta { flex: 1; }
+.thread-author { font-weight: 600; font-size: .875rem; color: var(--navy); }
+.thread-info { font-size: .75rem; color: var(--muted); font-family: var(--font-mono); margin-top: 2px; }
+.thread-badge {
+  font-size: .65rem; padding: 3px 8px; border-radius: 99px; font-weight: 700;
+  font-family: var(--font-mono); letter-spacing: .05em;
+}
+.badge-author { background: var(--pale); color: var(--cerulean); }
+.badge-expert { background: #FDF4FF; color: #7E22CE; }
+.thread-body { padding: 18px 20px; }
+.thread-text { font-size: .875rem; color: var(--navy); line-height: 1.75; }
+.thread-footer {
+  padding: 12px 20px; display: flex; align-items: center; gap: 14px;
+  background: var(--snow); border-top: 1px solid var(--border);
+}
+.vote-btn {
+  display: flex; align-items: center; gap: 6px; padding: 5px 10px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: none; cursor: pointer; font-size: .8rem; color: var(--slate);
+  transition: all var(--transition); font-family: var(--font-mono); font-weight: 600;
+}
+.vote-btn:hover, .vote-btn.active { background: var(--pale); color: var(--cerulean); border-color: var(--cerulean); }
+.reply-btn {
+  display: flex; align-items: center; gap: 6px; padding: 5px 10px;
+  border-radius: var(--radius-sm); border: none; background: none;
+  cursor: pointer; font-size: .8rem; color: var(--slate);
+  transition: all var(--transition); font-family: var(--font-body);
+}
+.reply-btn:hover { color: var(--cerulean); }
+.thread-replies { padding: 0 20px 12px 54px; }
+.reply {
+  padding: 14px; background: var(--snow); border-radius: var(--radius-md);
+  margin-bottom: 8px; border-left: 2px solid var(--border);
+}
+.reply.highlight { border-left-color: var(--cerulean); }
+.reply-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.reply-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .7rem; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.reply-author { font-size: .8rem; font-weight: 600; color: var(--navy); }
+.reply-time { font-size: .7rem; color: var(--muted); font-family: var(--font-mono); }
+.reply-text { font-size: .8125rem; color: var(--navy); line-height: 1.65; }
+.voice-reply {
+  display: flex; align-items: center; gap: 8px; margin-top: 8px;
+  background: var(--pale); border-radius: var(--radius-sm); padding: 8px 12px;
+}
+.voice-wave {
+  flex: 1; height: 24px; display: flex; align-items: center; gap: 2px;
+}
+.wave-bar {
+  width: 3px; background: var(--cerulean); border-radius: 99px;
+  animation: wave-anim 1.2s ease-in-out infinite;
+}
+.wave-bar:nth-child(2) { animation-delay: .1s; }
+.wave-bar:nth-child(3) { animation-delay: .2s; }
+.wave-bar:nth-child(4) { animation-delay: .3s; }
+.wave-bar:nth-child(5) { animation-delay: .4s; }
+.wave-bar:nth-child(6) { animation-delay: .3s; }
+.wave-bar:nth-child(7) { animation-delay: .2s; }
+.wave-bar:nth-child(8) { animation-delay: .1s; }
+@keyframes wave-anim {
+  0%, 100% { height: 6px; opacity: .5; }
+  50% { height: 20px; opacity: 1; }
+}
+.wave-bar.paused { animation-play-state: paused; height: 8px; opacity: .4; }
+
+/* ── ADMIN DASHBOARD ────────────────────────────────────── */
+.admin-header {
+  padding: 32px 40px; background: var(--white); border-bottom: 1px solid var(--border);
+}
+.admin-header h2 { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 6px; }
+.admin-grid { padding: 32px 40px; display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.admin-stat-card {
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 24px; display: flex; flex-direction: column; gap: 8px;
+}
+.admin-stat-icon {
+  width: 44px; height: 44px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+}
+.icon-blue { background: var(--pale); color: var(--cerulean); }
+.icon-green { background: #F0FDF4; color: var(--success); }
+.icon-amber { background: #FFFBEB; color: var(--warn); }
+.icon-purple { background: #FDF4FF; color: #7E22CE; }
+.admin-stat-num { font-family: var(--font-display); font-size: 2rem; color: var(--navy); }
+.admin-stat-label { font-size: .8rem; color: var(--slate); }
+.admin-stat-delta {
+  font-size: .75rem; font-family: var(--font-mono); font-weight: 600;
+  color: var(--success); margin-top: 4px;
+}
+
+.upload-zone {
+  background: var(--white); border: 2px dashed var(--border); border-radius: var(--radius-lg);
+  padding: 40px; text-align: center; cursor: pointer; transition: all var(--transition);
+}
+select.form-input { font-size: .875rem; font-family: var(--font-body); appearance: auto; }
+.upload-zone:hover { border-color: var(--cerulean); background: var(--pale); }
+.upload-icon { color: var(--muted); margin-bottom: 12px; }
+.upload-zone h4 { font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+.upload-zone p { font-size: .8rem; color: var(--muted); }
+
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.admin-table th {
+  text-align: left; padding: 10px 16px;
+  font-size: .7rem; font-family: var(--font-mono); font-weight: 700;
+  color: var(--muted); text-transform: uppercase; letter-spacing: .08em;
+  border-bottom: 1px solid var(--border); background: var(--snow);
+}
+.admin-table td {
+  padding: 12px 16px; font-size: .8125rem; color: var(--navy);
+  border-bottom: 1px solid var(--border);
+}
+.admin-table tr:hover td { background: var(--pale); }
+.status-dot {
+  display: inline-flex; align-items: center; gap: 6px; font-size: .75rem;
+  font-family: var(--font-mono);
+}
+.status-dot::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+}
+.status-dot.published::before { background: var(--success); }
+.status-dot.draft::before { background: var(--warn); }
+.status-dot.flagged::before { background: var(--danger); }
+
+/* ── ABOUT PAGE ─────────────────────────────────────────── */
+.about-hero { padding: 64px 40px; background: var(--white); border-bottom: 1px solid var(--border); }
+.about-layout { display: grid; grid-template-columns: 280px 1fr; gap: 48px; align-items: start; }
+.about-photo {
+  width: 220px; height: 220px; border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--oxford), var(--cerulean));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 4rem; color: #fff;
+  box-shadow: var(--shadow-lg);
+}
+.about-info h1 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 8px; }
+.about-info .title { color: var(--cerulean); font-family: var(--font-mono); font-size: .875rem; margin-bottom: 16px; }
+.about-info p { color: var(--slate); line-height: 1.8; max-width: 580px; }
+.about-content { padding: 48px 40px; }
+.interests-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 20px; }
+.interest-card {
+  padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--white); display: flex; align-items: center; gap: 10px;
+  font-size: .875rem; font-weight: 500; color: var(--navy);
+  transition: all var(--transition);
+}
+.interest-card:hover { border-color: var(--cerulean); background: var(--pale); color: var(--cerulean); }
+.interest-icon { font-size: 1.25rem; }
+.timeline { margin-top: 20px; }
+.timeline-item { display: flex; gap: 20px; padding-bottom: 28px; position: relative; }
+.timeline-item:not(:last-child)::before {
+  content: ''; position: absolute; left: 19px; top: 40px; bottom: 0;
+  width: 1px; background: var(--border);
+}
+.timeline-dot {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: var(--pale); border: 2px solid var(--cerulean);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cerulean); font-size: .875rem; font-weight: 700;
+  font-family: var(--font-mono);
+}
+.timeline-content h4 { font-weight: 600; font-size: .9375rem; color: var(--navy); margin-bottom: 4px; }
+.timeline-content .inst { font-size: .8rem; color: var(--cerulean); font-family: var(--font-mono); margin-bottom: 4px; }
+.timeline-content p { font-size: .8rem; color: var(--slate); line-height: 1.6; }
+
+/* ── CONTACT ────────────────────────────────────────────── */
+.contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; padding: 48px 40px; }
+.contact-form { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: .8rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .05em; }
+.form-input {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-md); font-family: var(--font-body); font-size: .875rem;
+  color: var(--navy); background: var(--snow); outline: none; transition: border-color var(--transition);
+}
+.form-input:focus { border-color: var(--cerulean); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+textarea.form-input { resize: vertical; min-height: 120px; line-height: 1.6; }
+.social-links { display: grid; gap: 12px; }
+.social-link {
+  display: flex; align-items: center; gap: 14px; padding: 16px;
+  background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md);
+  text-decoration: none; color: var(--navy); transition: all var(--transition);
+  cursor: pointer;
+}
+.social-link:hover { border-color: var(--cerulean); background: var(--pale); color: var(--cerulean); transform: translateX(4px); }
+.social-link-icon { width: 40px; height: 40px; border-radius: var(--radius-md); background: var(--pale); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.social-link-info h4 { font-weight: 600; font-size: .875rem; }
+.social-link-info p { font-size: .75rem; color: var(--slate); font-family: var(--font-mono); }
+
+/* ── PAPERS PAGE ────────────────────────────────────────── */
+.papers-controls {
+  padding: 20px 40px; background: var(--white); border-bottom: 1px solid var(--border);
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+}
+.search-input {
+  flex: 1; min-width: 200px; max-width: 340px;
+  padding: 9px 14px; border: 1px solid var(--border); border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size: .875rem; color: var(--navy); background: var(--snow); outline: none;
+  transition: border-color var(--transition);
+}
+.search-input:focus { border-color: var(--cerulean); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.papers-grid { padding: 32px 40px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 22px; }
+
+/* ── MODAL ──────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(10,15,30,.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; opacity: 0; pointer-events: none; transition: opacity var(--transition);
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white); border-radius: var(--radius-xl); padding: 36px;
+  max-width: 560px; width: 90%; max-height: 90vh; overflow-y: auto;
+  transform: translateY(16px) scale(.98); transition: transform var(--transition);
+  box-shadow: var(--shadow-lg);
+}
+.modal-overlay.open .modal { transform: translateY(0) scale(1); }
+.modal-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); background: var(--white);
+  cursor: pointer; color: var(--slate); transition: all var(--transition);
+}
+.modal-close:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.modal h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 20px; }
+
+/* ── TOAST ──────────────────────────────────────────────── */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  background: var(--navy); color: #fff; padding: 12px 18px;
+  border-radius: var(--radius-md); font-size: .875rem;
+  box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px;
+  transform: translateX(110%); transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  min-width: 240px; max-width: 340px;
+}
+.toast.show { transform: translateX(0); }
+.toast-icon { font-size: 1rem; }
+
+/* ── DIVIDER ────────────────────────────────────────────── */
+.divider { height: 1px; background: var(--border); margin: 0 40px; }
+
+/* ── NOTIFICATION DOT ───────────────────────────────────── */
+.notif-dot {
+  width: 8px; height: 8px; background: var(--cerulean); border-radius: 50%;
+  position: absolute; top: 6px; right: 6px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .6; transform: scale(1.2); }
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(-260px); width: 260px; }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; }
+  .hamburger { display: flex; }
+  .hero { padding: 48px 20px 40px; }
+  .content-grid, .papers-grid, .discussion-body, .admin-grid, .about-hero, .about-content, .contact-layout { padding: 24px 20px; }
+  .hero-stats { gap: 24px; }
+  .topbar { padding: 0 16px; }
+  .topbar-search { display: none; }
+  .about-layout { grid-template-columns: 1fr; }
+  .contact-layout { grid-template-columns: 1fr; }
+  .discussion-header, .papers-controls, .discussion-filters { padding: 16px 20px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .papers-grid { grid-template-columns: 1fr; }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 90; display: none; }
+  .overlay.show { display: block; }
+}
+
+/* ── UTILITIES ──────────────────────────────────────────── */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mb-4 { margin-bottom: 16px; }
+.text-sm { font-size: .875rem; }
+.text-xs { font-size: .75rem; }
+.text-muted { color: var(--muted); }
+.text-cerulean { color: var(--cerulean); }
+.font-mono { font-family: var(--font-mono); }
+.w-full { width: 100%; }
+.admin-section-wrap { padding: 0 40px 40px; }
+@media (max-width: 900px) { .admin-section-wrap { padding: 0 20px 20px; } }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+<!-- ── SIDEBAR ──────────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-initials">AR</div>
+    <div class="brand-name">Dr. Aryan Rahman</div>
+    <div class="brand-title">// AI & Cognitive Science</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Navigation</div>
+    <button class="nav-item active" onclick="showPage('home')">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 3l9 6.75V21a.75.75 0 01-.75.75H3.75A.75.75 0 013 21V9.75z"/></svg>
+      Home
+    </button>
+    <button class="nav-item" onclick="showPage('papers')">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-3-3v6M4.5 19.5l1.5-1.5M19.5 19.5l-1.5-1.5M12 3v3M3 12h3m15 0h-3M5.636 5.636l2.121 2.121m8.485 8.485l2.121 2.121"/><circle cx="12" cy="12" r="6" stroke-linecap="round"/></svg>
+      Research Papers
+      <span class="nav-badge">12</span>
+    </button>
+    <button class="nav-item" onclick="showPage('media')">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/></svg>
+      Media
+    </button>
+    <button class="nav-item" onclick="showPage('discussion')" style="position:relative">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+      Discussion
+      <span class="nav-badge">24</span>
+      <div class="notif-dot"></div>
+    </button>
+    <div class="nav-section-label">Info</div>
+    <button class="nav-item" onclick="showPage('about')">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+      About
+    </button>
+    <button class="nav-item" onclick="showPage('contact')">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+      Contact
+    </button>
+    <div class="nav-section-label">Admin</div>
+    <button class="nav-item" onclick="showPage('admin')">
+      <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Admin Panel
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
+      <span id="theme-label">Dark mode</span>
+    </button>
+  </div>
+</aside>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ── MAIN CONTENT ──────────────────────────────────────── -->
+<main class="main-content">
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="btn-icon hamburger" id="hamburger" onclick="toggleSidebar()">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+    </button>
+    <div class="topbar-search">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+      <input type="text" placeholder="Search papers, discussions, media…" id="global-search">
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-icon" onclick="showToast('🔔 No new notifications', 'info')" title="Notifications" style="position:relative">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="btn-icon" onclick="openModal('login-modal')" title="Sign in">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+      </button>
+      <div class="avatar" onclick="openModal('login-modal')">AR</div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════ HOME PAGE -->
+  <section class="page-section active" id="page-home">
+    <div class="hero">
+      <div class="hero-eyebrow">Research Platform · Est. 2024</div>
+      <h1>Advancing the <em>frontiers</em> of AI and Cognitive Science</h1>
+      <p class="hero-bio">
+        Associate Professor at MIT's Brain & Cognitive Sciences Department. My research focuses on neural architectures, language model alignment, and the philosophical implications of machine cognition.
+      </p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="showPage('papers')">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+          Browse Research
+        </button>
+        <button class="btn btn-ghost" onclick="showPage('discussion')">
+          Join Discussion →
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-number">47</div><div class="stat-label">// Publications</div></div>
+        <div class="stat-item"><div class="stat-number">2.4k</div><div class="stat-label">// Citations</div></div>
+        <div class="stat-item"><div class="stat-number">138</div><div class="stat-label">// Discussions</div></div>
+        <div class="stat-item"><div class="stat-number">12</div><div class="stat-label">// Years Active</div></div>
+      </div>
+    </div>
+
+    <!-- Featured Papers -->
+    <div class="content-grid">
+      <div class="section-header">
+        <h2 class="section-title">Featured Research</h2>
+        <button class="section-link" onclick="showPage('papers')">View all papers →</button>
+      </div>
+      <div class="card-grid">
+        <!-- Paper 1 -->
+        <div class="paper-card">
+          <div class="paper-tags">
+            <span class="tag">AI Alignment</span>
+            <span class="tag ml">ML</span>
+          </div>
+          <div class="paper-title">Emergent Goal Structures in Large Language Models: A Mechanistic Interpretability Study</div>
+          <div class="paper-abstract">We investigate how goal-directed behavior emerges in transformer architectures without explicit reward signals, using activation patching and causal tracing to identify circuits responsible for instrumental convergence phenomena across model scales.</div>
+          <div class="paper-meta">
+            <span>Nature AI · 2024</span>
+            <span>↓ 1,284 downloads</span>
+          </div>
+          <div class="paper-actions">
+            <button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF viewer…', 'success')">View PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss (18)</button>
+          </div>
+        </div>
+        <!-- Paper 2 -->
+        <div class="paper-card">
+          <div class="paper-tags">
+            <span class="tag neuro">Neuroscience</span>
+            <span class="tag nlp">NLP</span>
+          </div>
+          <div class="paper-title">Cross-Modal Binding in Human-AI Collaborative Reasoning Tasks</div>
+          <div class="paper-abstract">A comparative fMRI study examining how the human brain synchronizes with AI-generated linguistic structures during collaborative problem-solving, revealing unexpected parallels in temporal binding windows and attentional gating mechanisms.</div>
+          <div class="paper-meta">
+            <span>PNAS · 2024</span>
+            <span>↓ 892 downloads</span>
+          </div>
+          <div class="paper-actions">
+            <button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF viewer…', 'success')">View PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss (9)</button>
+          </div>
+        </div>
+        <!-- Paper 3 -->
+        <div class="paper-card">
+          <div class="paper-tags">
+            <span class="tag ethics">Ethics</span>
+            <span class="tag ml">ML</span>
+          </div>
+          <div class="paper-title">Value Pluralism and Alignment: Why Single-Objective AI is Philosophically Untenable</div>
+          <div class="paper-abstract">Drawing from moral philosophy and decision theory, this paper argues that any sufficiently intelligent AI system must represent and negotiate between plural, sometimes incommensurable human values—with implications for reward modeling.</div>
+          <div class="paper-meta">
+            <span>Phil. & Tech. · 2023</span>
+            <span>↓ 2,105 downloads</span>
+          </div>
+          <div class="paper-actions">
+            <button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF viewer…', 'success')">View PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss (31)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Latest Media -->
+    <div class="content-grid">
+      <div class="section-header">
+        <h2 class="section-title">Latest Media</h2>
+        <button class="section-link" onclick="showPage('media')">View all media →</button>
+      </div>
+      <div class="card-grid">
+        <div class="media-card">
+          <div class="media-thumb" onclick="showToast('▶ Video playback started', 'success')">
+            <div class="play-btn"><svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="media-duration">42:18</div>
+          </div>
+          <div class="media-info">
+            <div class="media-title">Lecture: Mechanistic Interpretability in Transformers</div>
+            <div class="media-desc">A deep-dive into activation patching, causal mediation analysis, and what they reveal about how language models form internal representations.</div>
+            <div class="media-meta"><span>Video Lecture</span><span>Oct 2024</span></div>
+          </div>
+        </div>
+        <div class="media-card">
+          <div class="media-thumb audio-thumb" onclick="showToast('🎙 Playing audio episode…', 'success')">
+            <div class="play-btn"><svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+            <div class="media-duration">1:08:44</div>
+          </div>
+          <div class="media-info">
+            <div class="media-title">Podcast: Value Alignment — an Interview with Prof. Stuart Russell</div>
+            <div class="media-desc">We discuss the inverse reward design problem, corrigibility, and the landscape of AI safety research in 2024.</div>
+            <div class="media-meta"><span>Audio Podcast</span><span>Sep 2024</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ PAPERS -->
+  <section class="page-section" id="page-papers">
+    <div class="discussion-header">
+      <h2>Research Papers</h2>
+      <p>Peer-reviewed publications, preprints, and working papers · 12 papers</p>
+    </div>
+    <div class="papers-controls">
+      <input class="search-input" type="text" placeholder="Search papers…" oninput="filterPapers(this.value)">
+      <button class="filter-pill active" onclick="setFilter(this, 'all')">All</button>
+      <button class="filter-pill" onclick="setFilter(this, 'AI Alignment')">AI Alignment</button>
+      <button class="filter-pill" onclick="setFilter(this, 'ml')">ML</button>
+      <button class="filter-pill" onclick="setFilter(this, 'neuro')">Neuroscience</button>
+      <button class="filter-pill" onclick="setFilter(this, 'ethics')">Ethics</button>
+      <button class="filter-pill" onclick="setFilter(this, 'nlp')">NLP</button>
+    </div>
+    <div class="papers-grid" id="papers-grid">
+      <!-- Paper cards -->
+      <div class="paper-card" data-tags="AI Alignment ml">
+        <div class="paper-tags"><span class="tag">AI Alignment</span><span class="tag ml">ML</span></div>
+        <div class="paper-title">Emergent Goal Structures in Large Language Models: A Mechanistic Interpretability Study</div>
+        <div class="paper-abstract">We investigate how goal-directed behavior emerges in transformer architectures without explicit reward signals, using activation patching and causal tracing to identify circuits responsible for instrumental convergence phenomena across model scales from 1B to 70B parameters.</div>
+        <div class="paper-meta"><span>Nature AI · 2024</span><span>↓ 1,284</span></div>
+        <div class="paper-actions"><button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF…', 'success')">View PDF</button><button class="btn btn-ghost btn-sm" onclick="showToast('↓ Downloading…', 'success')">Download</button><button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss</button></div>
+      </div>
+      <div class="paper-card" data-tags="neuro nlp">
+        <div class="paper-tags"><span class="tag neuro">Neuroscience</span><span class="tag nlp">NLP</span></div>
+        <div class="paper-title">Cross-Modal Binding in Human-AI Collaborative Reasoning Tasks</div>
+        <div class="paper-abstract">A comparative fMRI study examining how the human brain synchronizes with AI-generated linguistic structures during collaborative problem-solving, revealing unexpected parallels in temporal binding windows and attentional gating mechanisms across 48 subjects.</div>
+        <div class="paper-meta"><span>PNAS · 2024</span><span>↓ 892</span></div>
+        <div class="paper-actions"><button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF…', 'success')">View PDF</button><button class="btn btn-ghost btn-sm" onclick="showToast('↓ Downloading…', 'success')">Download</button><button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss</button></div>
+      </div>
+      <div class="paper-card" data-tags="ethics ml">
+        <div class="paper-tags"><span class="tag ethics">Ethics</span><span class="tag ml">ML</span></div>
+        <div class="paper-title">Value Pluralism and Alignment: Why Single-Objective AI is Philosophically Untenable</div>
+        <div class="paper-abstract">Drawing from moral philosophy and decision theory, this paper argues that any sufficiently intelligent AI system must represent and negotiate between plural, sometimes incommensurable human values—with far-reaching implications for reward modeling and constitutional AI.</div>
+        <div class="paper-meta"><span>Philosophy & Technology · 2023</span><span>↓ 2,105</span></div>
+        <div class="paper-actions"><button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF…', 'success')">View PDF</button><button class="btn btn-ghost btn-sm" onclick="showToast('↓ Downloading…', 'success')">Download</button><button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss</button></div>
+      </div>
+      <div class="paper-card" data-tags="ml nlp">
+        <div class="paper-tags"><span class="tag ml">ML</span><span class="tag nlp">NLP</span></div>
+        <div class="paper-title">Sparse Autoencoders for Concept Extraction in Foundation Models</div>
+        <div class="paper-abstract">We train sparse autoencoders on residual stream activations of GPT-4-scale models and recover thousands of interpretable features corresponding to semantic concepts, emotional valences, and syntactic roles—providing a new lens for model understanding.</div>
+        <div class="paper-meta"><span>NeurIPS 2023</span><span>↓ 3,412</span></div>
+        <div class="paper-actions"><button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF…', 'success')">View PDF</button><button class="btn btn-ghost btn-sm" onclick="showToast('↓ Downloading…', 'success')">Download</button><button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss</button></div>
+      </div>
+      <div class="paper-card" data-tags="neuro AI Alignment">
+        <div class="paper-tags"><span class="tag neuro">Neuroscience</span><span class="tag">AI Alignment</span></div>
+        <div class="paper-title">Predictive Processing and Transformer Attention: A Unified Computational Account</div>
+        <div class="paper-abstract">We propose a theoretical bridge between Karl Friston's Free Energy Principle and multi-head self-attention mechanisms in transformers, suggesting that both systems perform approximate Bayesian inference over hierarchical generative models.</div>
+        <div class="paper-meta"><span>Trends Cogn. Sci. · 2023</span><span>↓ 1,876</span></div>
+        <div class="paper-actions"><button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF…', 'success')">View PDF</button><button class="btn btn-ghost btn-sm" onclick="showToast('↓ Downloading…', 'success')">Download</button><button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss</button></div>
+      </div>
+      <div class="paper-card" data-tags="ethics nlp">
+        <div class="paper-tags"><span class="tag ethics">Ethics</span><span class="tag nlp">NLP</span></div>
+        <div class="paper-title">Epistemic Autonomy and Language Model Persuasion at Scale</div>
+        <div class="paper-abstract">As LLMs are deployed to billions of users, even subtle nudges in their outputs may aggregate into significant epistemic effects on public discourse. We quantify this risk using agent-based modeling of opinion dynamics under AI influence.</div>
+        <div class="paper-meta"><span>ACM FAccT · 2022</span><span>↓ 4,231</span></div>
+        <div class="paper-actions"><button class="btn btn-primary btn-sm" onclick="showToast('📄 Opening PDF…', 'success')">View PDF</button><button class="btn btn-ghost btn-sm" onclick="showToast('↓ Downloading…', 'success')">Download</button><button class="btn btn-ghost btn-sm" onclick="showPage('discussion')">Discuss</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ MEDIA -->
+  <section class="page-section" id="page-media">
+    <div class="discussion-header">
+      <h2>Media Library</h2>
+      <p>Video lectures, podcast episodes, and conference talks · 16 items</p>
+    </div>
+    <div class="discussion-filters">
+      <button class="filter-pill active" onclick="setFilter(this)">All</button>
+      <button class="filter-pill" onclick="setFilter(this)">Videos</button>
+      <button class="filter-pill" onclick="setFilter(this)">Podcasts</button>
+      <button class="filter-pill" onclick="setFilter(this)">Conference Talks</button>
+    </div>
+
+    <div class="discussion-body">
+      <!-- Audio Player -->
+      <div style="margin-bottom: 28px;">
+        <h3 style="font-family:var(--font-display);font-size:1.2rem;margin-bottom:16px;color:var(--navy);">Now Playing</h3>
+        <div class="audio-player">
+          <div class="audio-title">Value Alignment — An Interview with Prof. Stuart Russell</div>
+          <div class="audio-subtitle">// Episode 14 · Research Podcast · 1:08:44</div>
+          <div class="audio-controls">
+            <button class="audio-btn" style="width:32px;height:32px;" onclick="showToast('⏮ Previous track', 'info')">
+              <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </button>
+            <button class="audio-btn" style="width:44px;height:44px;" id="play-btn" onclick="togglePlay()">
+              <svg width="20" height="20" fill="white" viewBox="0 0 24 24" id="play-icon"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button class="audio-btn" style="width:32px;height:32px;" onclick="showToast('⏭ Next track', 'info')">
+              <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zm2-8.14L11.03 12 8 14.14V9.86zM16 6h2v12h-2z"/></svg>
+            </button>
+            <div class="audio-progress">
+              <div class="progress-bar" onclick="seekAudio(event)">
+                <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                <span class="audio-time" id="current-time">0:00</span>
+                <span class="audio-time">1:08:44</span>
+              </div>
+            </div>
+            <button class="audio-btn" style="width:32px;height:32px;" onclick="showToast('🔊 Volume adjusted', 'info')">
+              <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family:var(--font-display);font-size:1.2rem;margin-bottom:16px;color:var(--navy);">Video Lectures</h3>
+      <div class="card-grid" style="margin-bottom:32px;">
+        <div class="media-card">
+          <div class="media-thumb" onclick="showToast('▶ Opening video player…', 'success')">
+            <div class="play-btn"><svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="media-duration">42:18</div>
+          </div>
+          <div class="media-info">
+            <div class="media-title">Mechanistic Interpretability in Transformers — Full Lecture</div>
+            <div class="media-desc">Activation patching, causal tracing, and sparse autoencoders. How do we reverse-engineer a neural network? MIT 6.S191 Guest Lecture.</div>
+            <div class="media-meta"><span>📹 Video</span><span>Oct 2024</span><span>👁 4.2k views</span></div>
+          </div>
+        </div>
+        <div class="media-card">
+          <div class="media-thumb" onclick="showToast('▶ Opening video player…', 'success')">
+            <div class="play-btn"><svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="media-duration">58:02</div>
+          </div>
+          <div class="media-info">
+            <div class="media-title">NeurIPS 2023 Talk: Sparse Autoencoders for Concept Extraction</div>
+            <div class="media-desc">Conference presentation covering our work on recovering interpretable features from foundation model activations, including live demos and Q&A.</div>
+            <div class="media-meta"><span>📹 Conference Talk</span><span>Dec 2023</span><span>👁 8.7k views</span></div>
+          </div>
+        </div>
+        <div class="media-card">
+          <div class="media-thumb" style="background:linear-gradient(135deg,#1a1a2e,#16213e)" onclick="showToast('▶ Opening video player…', 'success')">
+            <div class="play-btn"><svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+            <div class="media-duration">1:22:44</div>
+          </div>
+          <div class="media-info">
+            <div class="media-title">Full Course: Philosophy of Mind & AI (8 Lectures)</div>
+            <div class="media-desc">A graduate seminar series exploring consciousness, intentionality, and what it means for machines to "understand" language. Recorded Spring 2023.</div>
+            <div class="media-meta"><span>📹 Course Series</span><span>May 2023</span><span>👁 12.1k views</span></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family:var(--font-display);font-size:1.2rem;margin-bottom:16px;color:var(--navy);">Podcast Episodes</h3>
+      <div class="card-grid">
+        <div class="media-card">
+          <div class="media-thumb audio-thumb" onclick="showToast('🎙 Playing episode…', 'success')">
+            <div class="play-btn"><svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+            <div class="media-duration">1:08:44</div>
+          </div>
+          <div class="media-info">
+            <div class="media-title">Ep. 14: Value Alignment with Stuart Russell</div>
+            <div class="media-desc">Corrigibility, inverse reward design, and the Berkeley CHAI approach to AI safety. A wide-ranging conversation about where the field is heading.</div>
+            <div class="media-meta"><span>🎙 Podcast</span><span>Sep 2024</span></div>
+          </div>
+        </div>
+        <div class="media-card">
+          <div class="media-thumb audio-thumb" style="background:linear-gradient(135deg,#1a1a2e,#0f3460)" onclick="showToast('🎙 Playing episode…', 'success')">
+            <div class="play-btn"><svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+            <div class="media-duration">54:12</div>
+          </div>
+          <div class="media-info">
+            <div class="media-title">Ep. 13: Does GPT-4 Understand Language?</div>
+            <div class="media-desc">Revisiting Searle's Chinese Room argument in the era of large language models. With guest Prof. Emily Bender (University of Washington).</div>
+            <div class="media-meta"><span>🎙 Podcast</span><span>Aug 2024</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ DISCUSSION -->
+  <section class="page-section" id="page-discussion">
+    <div class="discussion-header">
+      <h2>Open Discussion</h2>
+      <p>Academic debate, peer commentary, and Q&A — 24 active threads</p>
+    </div>
+    <div class="discussion-filters">
+      <button class="filter-pill active" onclick="setFilter(this)">All Topics</button>
+      <button class="filter-pill" onclick="setFilter(this)">AI Alignment</button>
+      <button class="filter-pill" onclick="setFilter(this)">ML Theory</button>
+      <button class="filter-pill" onclick="setFilter(this)">Ethics</button>
+      <button class="filter-pill" onclick="setFilter(this)">Neuroscience</button>
+      <button class="filter-pill" onclick="setFilter(this)">New</button>
+    </div>
+    <div class="discussion-body">
+      <!-- New Post Box -->
+      <div class="new-post-box">
+        <div style="font-weight:600;font-size:.875rem;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Start a new discussion
+        </div>
+        <div class="new-post-top">
+          <div class="avatar" style="width:40px;height:40px;font-size:.8rem">AR</div>
+          <textarea class="post-textarea" placeholder="Share your thoughts, questions, or commentary on any research topic…" id="new-comment"></textarea>
+        </div>
+        <div class="post-actions-row">
+          <button class="attach-btn" onclick="showToast('🎤 Voice recording started', 'success')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg>
+            Voice
+          </button>
+          <button class="attach-btn" onclick="showToast('📹 Video capture opened', 'success')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+            Video
+          </button>
+          <button class="attach-btn" onclick="showToast('📎 File picker opened', 'success')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13"/></svg>
+            Attach
+          </button>
+          <button class="btn btn-primary btn-sm" style="margin-left:auto;" onclick="postComment()">Post Discussion</button>
+        </div>
+      </div>
+
+      <!-- Thread 1 -->
+      <div class="thread" id="thread-1">
+        <div class="thread-header">
+          <div class="thread-avatar" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)">MK</div>
+          <div class="thread-meta">
+            <div class="thread-author" style="display:flex;align-items:center;gap:8px;">
+              Prof. Marcus Klein
+              <span class="thread-badge badge-expert">External Reviewer</span>
+            </div>
+            <div class="thread-info">Stanford AI Lab · 2 hours ago · on "Emergent Goal Structures"</div>
+          </div>
+          <button class="btn-icon" onclick="showToast('🚩 Thread flagged for review', 'info')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0l2.77-.693a9 9 0 016.208.682l.108.054a9 9 0 006.086.71l3.114-.732a48.524 48.524 0 01-.005-10.499l-3.11.732a9 9 0 01-6.085-.711l-.108-.054a9 9 0 00-6.208-.682L3 4.5M3 15V4.5"/></svg>
+          </button>
+        </div>
+        <div class="thread-body">
+          <p class="thread-text">Fascinating work on instrumental convergence. I'm curious whether your activation patching methodology controls for the possibility that the "goal-directed" circuits you identify are actually implementing heuristic shortcuts rather than genuine goal representations. In particular, did you test robustness across distribution shifts in the prompt framing? The convergence you observe at 70B might reflect emergent prompt-following rather than internal goal structures per se.</p>
+        </div>
+        <div class="thread-footer">
+          <button class="vote-btn active" onclick="vote(this)">▲ 24</button>
+          <button class="vote-btn" onclick="vote(this)">▼</button>
+          <button class="reply-btn" onclick="toggleReply('r1')">💬 Reply (3)</button>
+          <button class="reply-btn" onclick="showToast('🔗 Link copied to clipboard', 'success')">🔗 Share</button>
+        </div>
+        <div class="thread-replies" id="r1">
+          <div class="reply highlight">
+            <div class="reply-header">
+              <div class="reply-avatar" style="background:linear-gradient(135deg,#1E3A5F,#2563EB)">AR</div>
+              <span class="reply-author">Dr. Aryan Rahman</span>
+              <span class="thread-badge badge-author" style="font-size:.6rem;padding:2px 7px">Author</span>
+              <span class="reply-time" style="margin-left:auto">1 hour ago</span>
+            </div>
+            <p class="reply-text">Great question, Marcus. We did run distribution shift experiments across 12 distinct prompt framings (details in Appendix C). The circuits remained stable with cosine similarity >0.89 across framings, which we interpret as evidence against the heuristic-shortcut hypothesis. That said, you're right to be cautious — we haven't fully ruled out sophisticated prompt-following at scale. The 70B results were particularly striking because the goal representations seemed to persist even under adversarial paraphrasing.</p>
+          </div>
+          <div class="reply">
+            <div class="reply-header">
+              <div class="reply-avatar" style="background:linear-gradient(135deg,#059669,#34D399)">LP</div>
+              <span class="reply-author">Dr. Laura Park</span>
+              <span class="reply-time" style="margin-left:auto">45 min ago</span>
+            </div>
+            <p class="reply-text">Adding to Aryan's point — there's relevant work from Anthropic's interpretability team showing that similar circuits appear in models fine-tuned with very different objectives. This corroborates the idea that these are base architecture features rather than RLHF artifacts.</p>
+            <div class="voice-reply">
+              <button class="audio-btn" style="width:28px;height:28px;background:var(--cerulean);" onclick="showToast('▶ Playing voice reply…', 'success')">
+                <svg width="12" height="12" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </button>
+              <div class="voice-wave">
+                <div class="wave-bar" style="height:8px"></div>
+                <div class="wave-bar" style="height:14px"></div>
+                <div class="wave-bar" style="height:20px"></div>
+                <div class="wave-bar" style="height:12px"></div>
+                <div class="wave-bar" style="height:18px"></div>
+                <div class="wave-bar" style="height:10px"></div>
+                <div class="wave-bar" style="height:16px"></div>
+                <div class="wave-bar" style="height:8px"></div>
+              </div>
+              <span class="audio-time" style="color:var(--cerulean);font-size:.7rem">0:42</span>
+            </div>
+          </div>
+          <div id="reply-box-r1" style="display:none;margin-top:8px;">
+            <div style="display:flex;gap:8px;">
+              <div class="avatar" style="width:28px;height:28px;font-size:.65rem;flex-shrink:0">AR</div>
+              <textarea class="post-textarea" style="min-height:60px" placeholder="Write a reply…"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end;">
+              <button class="attach-btn" onclick="showToast('🎤 Recording…', 'success')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg> Voice</button>
+              <button class="btn btn-primary btn-sm" onclick="showToast('✓ Reply posted', 'success')">Post Reply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thread 2 -->
+      <div class="thread">
+        <div class="thread-header">
+          <div class="thread-avatar" style="background:linear-gradient(135deg,#DC2626,#F87171)">ZA</div>
+          <div class="thread-meta">
+            <div class="thread-author">Zara Ahmed, PhD Candidate</div>
+            <div class="thread-info">Oxford FHI · 5 hours ago · on "Value Pluralism"</div>
+          </div>
+        </div>
+        <div class="thread-body">
+          <p class="thread-text">The value pluralism paper raises a question I've been wrestling with: if we accept that human values are genuinely incommensurable (as Berlin argues), doesn't this imply that any AI alignment solution must be inherently political rather than technical? You'd need to resolve metaethical disputes before you could even specify what the AI should be aligned to. This seems to push the problem upstream in a way that technical alignment researchers often ignore.</p>
+        </div>
+        <div class="thread-footer">
+          <button class="vote-btn" onclick="vote(this)">▲ 17</button>
+          <button class="vote-btn" onclick="vote(this)">▼</button>
+          <button class="reply-btn" onclick="toggleReply('r2')">💬 Reply (1)</button>
+          <button class="reply-btn" onclick="showToast('🔗 Link copied', 'success')">🔗 Share</button>
+        </div>
+        <div class="thread-replies" id="r2" style="display:none">
+          <div class="reply">
+            <div class="reply-header">
+              <div class="reply-avatar" style="background:linear-gradient(135deg,#1E3A5F,#2563EB)">AR</div>
+              <span class="reply-author">Dr. Aryan Rahman</span>
+              <span class="thread-badge badge-author" style="font-size:.6rem;padding:2px 7px">Author</span>
+              <span class="reply-time" style="margin-left:auto">4 hours ago</span>
+            </div>
+            <p class="reply-text">Zara, you've put your finger on exactly the tension I try to articulate in Section 4. I don't think alignment is fully "just politics," but I do think it requires a richer collaborative process than current technical approaches assume. The analogy I use is constitutional design — also a political process, but one with technical constraints and principled structure. The key is building AI systems that are capable of navigating value tradeoffs with appropriate epistemic humility rather than imposing a single value function.</p>
+          </div>
+          <div id="reply-box-r2" style="display:none;margin-top:8px;">
+            <div style="display:flex;gap:8px;">
+              <div class="avatar" style="width:28px;height:28px;font-size:.65rem;flex-shrink:0">?</div>
+              <textarea class="post-textarea" style="min-height:60px" placeholder="Write a reply…"></textarea>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end;">
+              <button class="btn btn-primary btn-sm" onclick="showToast('✓ Reply posted', 'success')">Post Reply</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ ABOUT -->
+  <section class="page-section" id="page-about">
+    <div class="about-hero">
+      <div class="about-layout">
+        <div>
+          <div class="about-photo">AR</div>
+        </div>
+        <div class="about-info">
+          <h1>Dr. Aryan Rahman</h1>
+          <div class="title">// Associate Professor · MIT BCS & CSAIL</div>
+          <p>I study the intersection of artificial intelligence, cognitive science, and ethics. My work asks both empirical questions — how do neural networks form and represent knowledge? — and normative ones: how should we build AI systems that reflect human values without imposing a single value system?</p>
+          <p style="margin-top:14px;">Before MIT, I was a postdoctoral fellow at DeepMind's safety team and completed my PhD at Cambridge under Professor Zoubin Ghahramani. I've been a visiting researcher at OpenAI, the Santa Fe Institute, and the Future of Humanity Institute.</p>
+          <div class="hero-actions" style="margin-top:24px;">
+            <button class="btn btn-primary" onclick="showToast('📄 Downloading CV…', 'success')">Download CV</button>
+            <button class="btn btn-ghost" onclick="showPage('contact')">Get in Touch</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-content">
+      <h3 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:20px;color:var(--navy);">Research Interests</h3>
+      <div class="interests-grid">
+        <div class="interest-card"><span class="interest-icon">🧠</span>Mechanistic Interpretability</div>
+        <div class="interest-card"><span class="interest-icon">⚖️</span>AI Value Alignment</div>
+        <div class="interest-card"><span class="interest-icon">🔬</span>Computational Neuroscience</div>
+        <div class="interest-card"><span class="interest-icon">💬</span>Natural Language Understanding</div>
+        <div class="interest-card"><span class="interest-icon">🤔</span>Philosophy of Mind</div>
+        <div class="interest-card"><span class="interest-icon">🌐</span>AI Ethics & Governance</div>
+        <div class="interest-card"><span class="interest-icon">🔭</span>Emergent Capabilities</div>
+        <div class="interest-card"><span class="interest-icon">🧬</span>Bayesian Cognition</div>
+      </div>
+
+      <div style="margin-top:40px;">
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:24px;color:var(--navy);">Academic Background</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot">24</div>
+            <div class="timeline-content">
+              <h4>Associate Professor, MIT</h4>
+              <div class="inst">Department of Brain & Cognitive Sciences + CSAIL</div>
+              <p>Leading the Cognitive AI Lab. Teaching 6.864 (Natural Language Processing) and 9.S912 (AI Alignment: Theory & Practice).</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">21</div>
+            <div class="timeline-content">
+              <h4>Postdoctoral Researcher, DeepMind</h4>
+              <div class="inst">Safety Team, London</div>
+              <p>Worked on specification gaming, reward hacking, and interpretability for RL agents. Contributed to the Sparrow paper.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">18</div>
+            <div class="timeline-content">
+              <h4>PhD, Machine Learning — University of Cambridge</h4>
+              <div class="inst">Supervisor: Prof. Zoubin Ghahramani</div>
+              <p>Thesis: "Hierarchical Bayesian Models of Goal-Directed Behavior in Humans and Machines." Won the British Computer Society Distinguished Dissertation Award.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot">14</div>
+            <div class="timeline-content">
+              <h4>BSc & MSc, Computer Science — IIT Delhi</h4>
+              <div class="inst">Gold Medalist, Class of 2014</div>
+              <p>Specialization in computational theory and algorithms. MSc thesis on probabilistic graphical models.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ CONTACT -->
+  <section class="page-section" id="page-contact">
+    <div class="discussion-header">
+      <h2>Get in Touch</h2>
+      <p>Research inquiries, collaboration proposals, media requests</p>
+    </div>
+    <div class="contact-layout">
+      <div class="contact-form">
+        <h3 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:20px;color:var(--navy);">Send a Message</h3>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input class="form-input" type="text" placeholder="Dr. Jane Smith">
+        </div>
+        <div class="form-group">
+          <label>Affiliation</label>
+          <input class="form-input" type="text" placeholder="University / Organization">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input class="form-input" type="email" placeholder="jane@university.edu">
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select class="form-input">
+            <option>Research Collaboration</option>
+            <option>PhD / Postdoc Inquiry</option>
+            <option>Media / Press</option>
+            <option>Speaking Invitation</option>
+            <option>General Inquiry</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea class="form-input" placeholder="Describe your inquiry or proposal in detail…"></textarea>
+        </div>
+        <button class="btn btn-primary w-full" onclick="showToast('✓ Message sent — I'll respond within 48 hours', 'success')">Send Message</button>
+      </div>
+      <div>
+        <h3 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:20px;color:var(--navy);">Connect</h3>
+        <div class="social-links">
+          <div class="social-link" onclick="showToast('Opening Google Scholar…', 'info')">
+            <div class="social-link-icon">📚</div>
+            <div class="social-link-info">
+              <h4>Google Scholar</h4>
+              <p>// 47 papers · 2,400+ citations</p>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto;color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </div>
+          <div class="social-link" onclick="showToast('Opening Twitter/X…', 'info')">
+            <div class="social-link-icon">𝕏</div>
+            <div class="social-link-info">
+              <h4>Twitter / X</h4>
+              <p>// @aryanrahman_ai</p>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto;color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </div>
+          <div class="social-link" onclick="showToast('Opening LinkedIn…', 'info')">
+            <div class="social-link-icon">in</div>
+            <div class="social-link-info">
+              <h4>LinkedIn</h4>
+              <p>// Professional network</p>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto;color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </div>
+          <div class="social-link" onclick="showToast('Opening GitHub…', 'info')">
+            <div class="social-link-icon">⌥</div>
+            <div class="social-link-info">
+              <h4>GitHub</h4>
+              <p>// Research code & datasets</p>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto;color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </div>
+          <div class="social-link" onclick="showToast('Opening ArXiv…', 'info')">
+            <div class="social-link-icon">📐</div>
+            <div class="social-link-info">
+              <h4>ArXiv Preprints</h4>
+              <p>// ar.rahman@arxiv.org</p>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left:auto;color:var(--muted)"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/></svg>
+          </div>
+        </div>
+        <div style="margin-top:28px;padding:20px;background:var(--pale);border-radius:var(--radius-md);border:1px solid rgba(37,99,235,.15);">
+          <div style="font-size:.8rem;font-family:var(--font-mono);color:var(--cerulean);margin-bottom:6px;">// Office Hours</div>
+          <div style="font-size:.875rem;font-weight:600;color:var(--navy);margin-bottom:4px;">Wednesdays, 2–4 PM EST</div>
+          <div style="font-size:.8rem;color:var(--slate);">Building 46, Room 5133 · MIT Campus<br>or via Zoom — book at calendly.com/arrahman</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ ADMIN -->
+  <section class="page-section" id="page-admin">
+    <div class="admin-header">
+      <h2>Admin Dashboard</h2>
+      <p style="color:var(--slate);font-size:.875rem;margin-top:4px;">Manage content, uploads, and moderation</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="admin-grid">
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon icon-blue">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+        </div>
+        <div class="admin-stat-num">12</div>
+        <div class="admin-stat-label">Published Papers</div>
+        <div class="admin-stat-delta">↑ 2 this month</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon icon-green">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+        </div>
+        <div class="admin-stat-num">138</div>
+        <div class="admin-stat-label">Active Discussions</div>
+        <div class="admin-stat-delta">↑ 24 this week</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon icon-amber">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+        </div>
+        <div class="admin-stat-num">847</div>
+        <div class="admin-stat-label">Registered Users</div>
+        <div class="admin-stat-delta">↑ 61 this week</div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon icon-purple">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+        </div>
+        <div class="admin-stat-num">9.2k</div>
+        <div class="admin-stat-label">Total Downloads</div>
+        <div class="admin-stat-delta">↑ 12% vs last month</div>
+      </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="admin-section-wrap">
+      <h3 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:16px;color:var(--navy);">Upload Content</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:32px;">
+        <div class="upload-zone" onclick="showToast('📄 PDF upload dialog opened', 'success')">
+          <div class="upload-icon">
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+          </div>
+          <h4>Upload Research Paper</h4>
+          <p>PDF · max 25 MB · drag & drop or click</p>
+        </div>
+        <div class="upload-zone" onclick="showToast('📹 Video upload dialog opened', 'success')">
+          <div class="upload-icon">
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+          </div>
+          <h4>Upload Video</h4>
+          <p>MP4, WebM · max 2 GB · streamed via CDN</p>
+        </div>
+        <div class="upload-zone" onclick="showToast('🎙 Audio upload dialog opened', 'success')">
+          <div class="upload-icon">
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"/></svg>
+          </div>
+          <h4>Upload Audio</h4>
+          <p>MP3, WAV, OGG · max 200 MB</p>
+        </div>
+      </div>
+
+      <!-- Content Table -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <h4 style="font-weight:600;font-size:.9375rem;color:var(--navy);">Published Content</h4>
+          <button class="btn btn-primary btn-sm" onclick="showToast('✓ Changes saved', 'success')">Save Changes</button>
+        </div>
+        <div class="admin-table-wrap"><table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Downloads</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:500;max-width:260px;">Emergent Goal Structures in LLMs…</td>
+              <td><span class="tag">Paper</span></td>
+              <td class="font-mono text-xs text-muted">Nov 2024</td>
+              <td><span class="status-dot published">Published</span></td>
+              <td class="font-mono text-xs">1,284</td>
+              <td><button class="attach-btn" onclick="showToast('✏ Editing paper…', 'info')">Edit</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500;max-width:260px;">Cross-Modal Binding in Human-AI…</td>
+              <td><span class="tag">Paper</span></td>
+              <td class="font-mono text-xs text-muted">Oct 2024</td>
+              <td><span class="status-dot published">Published</span></td>
+              <td class="font-mono text-xs">892</td>
+              <td><button class="attach-btn" onclick="showToast('✏ Editing paper…', 'info')">Edit</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500;max-width:260px;">Sparse Autoencoders for Concept Extraction…</td>
+              <td><span class="tag">Paper</span></td>
+              <td class="font-mono text-xs text-muted">Sep 2024</td>
+              <td><span class="status-dot draft">Draft</span></td>
+              <td class="font-mono text-xs">—</td>
+              <td><button class="attach-btn" onclick="showToast('✏ Editing draft…', 'info')">Edit</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500;max-width:260px;">Mechanistic Interpretability Lecture (Video)</td>
+              <td><span class="tag ml">Video</span></td>
+              <td class="font-mono text-xs text-muted">Oct 2024</td>
+              <td><span class="status-dot published">Published</span></td>
+              <td class="font-mono text-xs">4,218 views</td>
+              <td><button class="attach-btn" onclick="showToast('✏ Editing media…', 'info')">Edit</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight:500;max-width:260px;">Flagged comment — possible spam</td>
+              <td><span class="tag ethics">Comment</span></td>
+              <td class="font-mono text-xs text-muted">Today</td>
+              <td><span class="status-dot flagged">Flagged</span></td>
+              <td class="font-mono text-xs">—</td>
+              <td><button class="attach-btn" style="color:var(--danger);border-color:var(--danger);" onclick="showToast('🗑 Comment deleted', 'danger')">Delete</button></td>
+            </tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- ── MODALS ─────────────────────────────────────────────── -->
+<div class="modal-overlay" id="login-modal" onclick="closeModal('login-modal', event)">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('login-modal', null)">✕</button>
+    <h3>Sign in to Participate</h3>
+    <p style="font-size:.875rem;color:var(--slate);margin-bottom:24px;">Join the discussion, upvote research, and track your contributions.</p>
+    <div class="form-group">
+      <label>Email</label>
+      <input class="form-input" type="email" placeholder="your@university.edu">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input class="form-input" type="password" placeholder="••••••••">
+    </div>
+    <button class="btn btn-primary w-full" onclick="showToast('✓ Welcome back!', 'success');closeModal('login-modal',null)">Sign In</button>
+    <div style="text-align:center;margin-top:16px;">
+      <button style="background:none;border:none;color:var(--cerulean);font-size:.875rem;cursor:pointer;font-family:var(--font-body);" onclick="showToast('Registration link sent to your email', 'success')">Create an account →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ──────────────────────────────────────────────── -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+/* ── NAVIGATION ─────────────────────────────────────────── */
+function showPage(id) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('page-' + id);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    const oc = n.getAttribute('onclick') || '';
+    if (oc.includes("'" + id + "'") || oc.includes('"' + id + '"')) n.classList.add('active');
+  });
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── THEME ──────────────────────────────────────────────── */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-label').textContent = isDark ? 'Dark mode' : 'Light mode';
+}
+
+/* ── SIDEBAR ────────────────────────────────────────────── */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* ── FILTER PILLS ───────────────────────────────────────── */
+function setFilter(el, tag) {
+  el.closest('.discussion-filters, .papers-controls').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  if (tag !== undefined) filterPapersByTag(tag);
+}
+function filterPapers(val) {
+  document.querySelectorAll('#papers-grid .paper-card').forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+function filterPapersByTag(tag) {
+  document.querySelectorAll('#papers-grid .paper-card').forEach(card => {
+    if (!tag || tag === 'all') { card.style.display = ''; return; }
+    const tags = (card.dataset.tags || '').toLowerCase();
+    const text = card.textContent.toLowerCase();
+    card.style.display = (tags.includes(tag.toLowerCase()) || text.includes(tag.toLowerCase())) ? '' : 'none';
+  });
+}
+
+/* ── VOTE ───────────────────────────────────────────────── */
+function vote(btn) {
+  // Only upvote buttons have a number; ignore downvote
+  const isUp = btn.textContent.includes('▲');
+  if (!isUp) {
+    btn.classList.toggle('active');
+    showToast('👎 Downvoted', 'info');
+    return;
+  }
+  const wasActive = btn.classList.contains('active');
+  btn.classList.toggle('active');
+  const match = btn.textContent.match(/\d+/);
+  if (!match) return;
+  const n = parseInt(match[0]);
+  btn.textContent = '▲ ' + (wasActive ? n - 1 : n + 1);
+}
+
+/* ── REPLY TOGGLE ───────────────────────────────────────── */
+function toggleReply(id) {
+  const box = document.getElementById(id);
+  if (!box) return;
+  const computed = window.getComputedStyle(box).display;
+  const isVisible = computed !== 'none';
+  box.style.display = isVisible ? 'none' : 'block';
+  const rBox = document.getElementById('reply-box-' + id);
+  if (rBox) rBox.style.display = isVisible ? 'none' : 'block';
+}
+
+/* ── POST COMMENT — renders new thread ──────────────────── */
+let commentCount = 2;
+function postComment() {
+  const ta = document.getElementById('new-comment');
+  const text = ta.value.trim();
+  if (!text) { showToast('⚠ Please write something first', 'warn'); return; }
+  commentCount++;
+  const id = 'r' + commentCount;
+  const now = new Date();
+  const timeStr = 'Just now';
+  const div = document.createElement('div');
+  div.className = 'thread';
+  div.style.animation = 'fadeInUp .35s ease forwards';
+  div.innerHTML = `
+    <div class="thread-header">
+      <div class="thread-avatar" style="background:linear-gradient(135deg,#1E3A5F,#2563EB)">AR</div>
+      <div class="thread-meta">
+        <div class="thread-author" style="display:flex;align-items:center;gap:8px;">
+          Dr. Aryan Rahman
+          <span class="thread-badge badge-author">Author</span>
+        </div>
+        <div class="thread-info">${timeStr}</div>
+      </div>
+    </div>
+    <div class="thread-body"><p class="thread-text">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p></div>
+    <div class="thread-footer">
+      <button class="vote-btn" onclick="vote(this)">▲ 0</button>
+      <button class="vote-btn" onclick="vote(this)">▼</button>
+      <button class="reply-btn" onclick="toggleReply('${id}')">💬 Reply (0)</button>
+      <button class="reply-btn" onclick="showToast('🔗 Link copied', 'success')">🔗 Share</button>
+    </div>
+    <div class="thread-replies" id="${id}" style="display:none">
+      <div id="reply-box-${id}" style="display:none;margin-top:8px;">
+        <div style="display:flex;gap:8px;">
+          <div class="avatar" style="width:28px;height:28px;font-size:.65rem;flex-shrink:0">?</div>
+          <textarea class="post-textarea" style="min-height:60px" placeholder="Write a reply…"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end;">
+          <button class="btn btn-primary btn-sm" onclick="showToast('✓ Reply posted', 'success')">Post Reply</button>
+        </div>
+      </div>
+    </div>`;
+  // Insert before first thread
+  const body = document.querySelector('.discussion-body');
+  const firstThread = body.querySelector('.thread');
+  body.insertBefore(div, firstThread);
+  ta.value = '';
+  showToast('✓ Discussion posted successfully', 'success');
+}
+
+/* ── AUDIO PLAYER ───────────────────────────────────────── */
+let playing = false;
+let progVal = 0;
+let audioInterval;
+function togglePlay() {
+  playing = !playing;
+  document.getElementById('play-icon').innerHTML = playing
+    ? '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+    : '<path d="M8 5v14l11-7z"/>';
+  // Animate wave bars
+  document.querySelectorAll('.wave-bar').forEach(b => {
+    b.classList.toggle('paused', !playing);
+  });
+  if (playing) {
+    audioInterval = setInterval(() => {
+      if (progVal < 100) { progVal += 0.04; updateProgress(); }
+      else { playing = false; clearInterval(audioInterval); }
+    }, 50);
+  } else {
+    clearInterval(audioInterval);
+  }
+}
+function updateProgress() {
+  document.getElementById('progress-fill').style.width = progVal + '%';
+  const total = 4124;
+  const cur = Math.floor(total * progVal / 100);
+  const m = Math.floor(cur / 60), s = cur % 60;
+  document.getElementById('current-time').textContent = m + ':' + String(s).padStart(2, '0');
+}
+function seekAudio(e) {
+  const bar = e.currentTarget;
+  const rect = bar.getBoundingClientRect();
+  progVal = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
+  updateProgress();
+  showToast('⏩ Seeked to position', 'info');
+}
+
+/* ── MODAL ──────────────────────────────────────────────── */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id, e) {
+  // e is null when called from close button; e is event when called from overlay onclick
+  if (e && e.target !== document.getElementById(id)) return; // clicked inside modal, not overlay
+  document.getElementById(id).classList.remove('open');
+}
+// Close modal on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+});
+
+/* ── TOAST ──────────────────────────────────────────────── */
+function showToast(msg, type = 'info') {
+  const icons = { success: '✓', info: 'ℹ', warn: '⚠', danger: '✕' };
+  const colors = { success: '#10B981', info: '#2563EB', warn: '#F59E0B', danger: '#EF4444' };
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.borderLeft = '3px solid ' + (colors[type] || colors.info);
+  t.innerHTML = `<span class="toast-icon" style="color:${colors[type]||colors.info}">${icons[type]||'ℹ'}</span>${msg}`;
+  c.appendChild(t);
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3200);
+}
+
+/* ── SEARCH ─────────────────────────────────────────────── */
+document.getElementById('global-search').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.value.trim()) {
+    showToast(`🔍 Searching for "${e.target.value}"…`, 'info');
+    e.target.value = '';
+  }
+});
+
+/* ── FADE IN ANIMATION ──────────────────────────────────── */
+const style = document.createElement('style');
+style.textContent = `@keyframes fadeInUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }`;
+document.head.appendChild(style);
+
+/* ── INIT: wave bars start paused ──────────────────────── */
+document.querySelectorAll('.wave-bar').forEach(b => b.classList.add('paused'));
+</script>
+</body>
+</html>
